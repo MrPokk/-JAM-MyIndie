@@ -3,13 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MovingComponentProvider), typeof(InputComponentProvider))]
 [RequireComponent(typeof(CharacterController))]
-public class PlayerProvider : ProviderEcs<EntitiesPresenter>
+public class PlayerProvider : EntitiesProvider
 {
-    public CharacterController characterController;
-    protected override void Awake()
-    {
-        base.Awake();
 
-        characterController = GetComponent<CharacterController>();
-    }
 }

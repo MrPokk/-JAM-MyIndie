@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BitterECS.Core
@@ -158,6 +158,8 @@ namespace BitterECS.Core
         public static Predicate<T> LessThan<T>(T value) where T : IComparable<T> => c => c.CompareTo(value) < 0;
         public static Predicate<T> EqualTo<T>(T value) where T : IEquatable<T> => c => c.Equals(value);
         public static Predicate<T> NotNull<T>() where T : class => c => c != null;
+
+        public static bool HasProvider<T>(EcsEntity e) where T : ILinkableProvider => e.HasProvider<T>();
 
         public static bool Has<T1>(EcsEntity e) where T1 : struct => e.Has<T1>();
         public static bool Has<T1, T2>(EcsEntity e) where T1 : struct where T2 : struct => Has<T1>(e) && e.Has<T2>();

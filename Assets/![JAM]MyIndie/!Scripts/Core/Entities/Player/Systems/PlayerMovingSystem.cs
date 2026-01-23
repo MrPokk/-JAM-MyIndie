@@ -12,7 +12,7 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
     private EcsFilter _ecsFilter =
     Build.For<EntitiesPresenter>()
          .Filter()
-         .WhereProvider<PlayerProvider>()
+         .WhereProvider<EntitiesProvider>()
          .Include<InputComponent>()
          .Include<MovingComponent>();
 
@@ -46,7 +46,7 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
     {
         foreach (var entity in _ecsFilter)
         {
-            var provider = entity.GetProvider<PlayerProvider>();
+            var provider = entity.GetProvider<EntitiesProvider>();
 
             ref var movingComponent = ref entity.Get<MovingComponent>();
             ref var inputComponent = ref entity.Get<InputComponent>();

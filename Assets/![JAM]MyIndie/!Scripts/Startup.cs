@@ -1,4 +1,4 @@
-using BitterECS.Integration;
+﻿using BitterECS.Integration;
 
 public class Startup : EcsUnityRoot
 {
@@ -9,6 +9,6 @@ public class Startup : EcsUnityRoot
 
     protected override void PostBootstrap()
     {
-
+        PlayerProvider player = new Loader<PlayerProvider>(EntitiesPaths.PLAYER);
     }
 }

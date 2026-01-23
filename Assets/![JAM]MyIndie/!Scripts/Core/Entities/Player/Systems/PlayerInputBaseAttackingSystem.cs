@@ -8,8 +8,7 @@ public class PlayerInputBaseAttackingSystem : IEcsInitSystem
     private EcsFilter _playerEntities =
         Build.For<EntitiesPresenter>()
              .Filter()
-             .Include<InputComponent>()
-             .Exclude<IsMovingComponent>();
+             .Include<InputComponent>();
 
     public void Init()
     {

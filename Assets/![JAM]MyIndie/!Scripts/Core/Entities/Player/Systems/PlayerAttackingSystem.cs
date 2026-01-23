@@ -1,5 +1,4 @@
-﻿using System;
-using BitterECS.Core;
+﻿using BitterECS.Core;
 using UnityEngine;
 
 public class PlayerAttackingSystem : IEcsAutoImplement

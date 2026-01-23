@@ -11,7 +11,6 @@ namespace BitterECS.Integration
         void Sync(EcsEntity entity);
     }
 
-    [DisallowMultipleComponent]
     public abstract class ProviderEcs : MonoBehaviour, ITypedComponentProvider, ILinkableProvider
     {
         public abstract bool IsPresenter { get; }
@@ -27,6 +26,7 @@ namespace BitterECS.Integration
         public void Dispose() => DisposeInternal();
     }
 
+    [DisallowMultipleComponent]
     public class ProviderEcs<T> : ProviderEcs
     {
         private static readonly bool s_isPresenterType = typeof(EcsPresenter).IsAssignableFrom(typeof(T));
