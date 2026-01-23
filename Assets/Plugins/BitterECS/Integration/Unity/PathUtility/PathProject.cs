@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 namespace BitterECS.Extra
 {
     public static class PathProject
