@@ -47,7 +47,6 @@ namespace BitterECS.Integration
                     if (methodInfo != null)
                     {
                         var genericMethod = methodInfo.MakeGenericMethod(typeof(T));
-
                         s_syncAction = (SyncDelegate)Delegate.CreateDelegate(typeof(SyncDelegate), genericMethod);
                     }
                 }
@@ -58,14 +57,12 @@ namespace BitterECS.Integration
             }
         }
 
-
         [SerializeField]
         protected T _value;
 
         public ref T Value => ref _value;
 
         private bool _isDestroying = false;
-
         private EcsProperty _properties;
         private ProviderEcs _cachedRootProvider;
 
@@ -79,33 +76,26 @@ namespace BitterECS.Integration
             {
                 if (s_isPresenterType)
                 {
-                    if (_properties?.Presenter != null)
-                        return _properties.Presenter.Get(_properties.Id);
-
-                    return UnLinkingRegistrationEntity();
+                    return EnsureEntityCreated();
                 }
 
-                if (_cachedRootProvider != null)
-                    return _cachedRootProvider.Entity;
-
                 FindAndCacheRoot();
-                return _cachedRootProvider?.Entity;
+                return _cachedRootProvider != null ? _cachedRootProvider.Entity : null;
             }
         }
-
 
         protected virtual void Awake()
         {
             if (s_isPresenterType)
             {
-                HandlePresenterAwake();
+                EnsureEntityCreated();
             }
             else
             {
                 FindAndCacheRoot();
                 if (_cachedRootProvider == null)
                 {
-                    Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Failed to find a valid Parent Entity (Presenter) on GameObject '{name}'. Check if a Root Provider is attached.", this);
+                    Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Failed to find a valid Parent Entity (Presenter) on GameObject '{name}'.", this);
                 }
             }
         }
@@ -117,60 +107,65 @@ namespace BitterECS.Integration
 
         public override void Sync(EcsEntity entity)
         {
-            if (s_isPresenterType) return;
-            if (!s_isValueType) return;
-            if (entity == null) return;
-
+            if (s_isPresenterType || !s_isValueType || entity == null) return;
             s_syncAction?.Invoke(entity, _value);
+        }
+
+        private EcsEntity EnsureEntityCreated()
+        {
+            if (_isDestroying) return null;
+
+            if (_properties != null && _properties.Presenter != null)
+            {
+                var existing = _properties.Presenter.Get(_properties.Id);
+                if (existing != null) return existing;
+            }
+
+            try
+            {
+                var entity = Build.For(typeof(T))
+                    .Add<EcsEntity>()
+                    .WithPost(RegistrationComponent)
+                    .WithLink(this)
+                    .Create();
+
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Critical error creating entity: {ex.Message}");
+                return null;
+            }
         }
 
         private void FindAndCacheRoot()
         {
-            if (_isDestroying)
+            if (_isDestroying || _cachedRootProvider != null)
                 return;
 
             GetComponents(s_componentCache);
 
-            for (int i = 0; i < s_componentCache.Count; i++)
+            for (var i = 0; i < s_componentCache.Count; i++)
             {
                 if (s_componentCache[i] is ProviderEcs provider && provider.IsPresenter)
                 {
                     _cachedRootProvider = provider;
-                    s_componentCache.Clear();
-                    return;
+                    break;
                 }
             }
 
             s_componentCache.Clear();
         }
 
-        private void HandlePresenterAwake()
-        {
-            try
-            {
-                LinkingRegistrationEntity();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error while creating entity for {typeof(T).Name}: {ex.Message}");
-            }
-        }
-
-        private EcsEntity UnLinkingRegistrationEntity() => Build.For(typeof(T))
-            .Add<EcsEntity>()
-            .WithPost(RegistrationComponent)
-            .Create();
-
-        private EcsEntity LinkingRegistrationEntity() => Build.For(typeof(T))
-            .Add<EcsEntity>()
-            .WithPost(entity => RegistrationComponent(entity))
-            .WithLink(this)
-            .Create();
-
         private void RegistrationComponent(EcsEntity entity)
         {
-            if (_isDestroying)
+            if (_isDestroying || entity == null)
                 return;
+
+            if (s_isPresenterType)
+            {
+                _properties = entity.Properties;
+            }
 
             GetComponents(s_componentCache);
 
@@ -226,7 +221,10 @@ namespace BitterECS.Integration
                 Entity?.Dispose();
             }
 
-            Destroy(gameObject);
+            if (gameObject != null)
+            {
+                Destroy(gameObject);
+            }
         }
 
 #if UNITY_EDITOR
@@ -237,15 +235,16 @@ namespace BitterECS.Integration
 
         private void OnValidate()
         {
-            if (!s_isPresenterType)
-            {
-                if (!Application.isPlaying) ValidateHasPresenter();
+            if (s_isPresenterType) return;
 
-                if (Application.isPlaying && (_cachedRootProvider != null || Entity != null))
-                {
-                    var entity = Entity;
-                    if (entity != null) Sync(entity);
-                }
+            if (!Application.isPlaying)
+            {
+                ValidateHasPresenter();
+            }
+            else if (_cachedRootProvider != null || Entity != null)
+            {
+                var entity = Entity;
+                if (entity != null) Sync(entity);
             }
         }
 
