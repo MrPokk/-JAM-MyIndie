@@ -10,12 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 2537004601126083646}
   - component: {fileID: 8043880076602048669}
-  - component: {fileID: 4361897479457926694}
   - component: {fileID: 7908859921551164943}
   - component: {fileID: 3970930688320794487}
   - component: {fileID: 382386624837884472}
   - component: {fileID: 4714052660113420691}
   - component: {fileID: 3852034596677251386}
+  - component: {fileID: 3807249467490418303}
+  - component: {fileID: 6231310826642409039}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -97,31 +98,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!143 &4361897479457926694
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7892323701490823663}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 1
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 0
-  m_Radius: 0.07
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7908859921551164943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742a7f133c847244f9bd312ece71920e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProvider
-  characterController: {fileID: 0}
   spriteRenderer: {fileID: 0}
+  rigidbody: {fileID: 0}
 --- !u!114 &3970930688320794487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +162,8 @@ MonoBehaviour:
   _value:
     maxHealth: 10
     currentHealth: 10
+    timeImmunity: 0
+    lastDamage: 0
 --- !u!114 &3852034596677251386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,3 +178,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TouchDamageComponentProvider
   _value:
     damage: 1
+--- !u!61 &3807249467490418303
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7892323701490823663}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.16, y: 0.16}
+    newSize: {x: 0.16, y: 0.16}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.16, y: 0.16}
+  m_EdgeRadius: 0
+--- !u!50 &6231310826642409039
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7892323701490823663}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4

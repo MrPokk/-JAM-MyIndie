@@ -1,31 +1,23 @@
-﻿using System;
-using BitterECS.Integration;
+﻿using BitterECS.Integration;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class EntitiesProvider : ProviderEcs<EntitiesPresenter>
 {
-    public CharacterController characterController;
     public SpriteRenderer spriteRenderer;
+    public Rigidbody2D rigidbody;
 
     protected override void Awake()
     {
         base.Awake();
-        characterController = GetComponent<CharacterController>();
+        rigidbody = GetComponentInChildren<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
-
-    protected void OnControllerColliderHit(ControllerColliderHit hit)
+    void OnCollisionEnter2D(Collision2D collision2D)
     {
-        Entity.Add<IsCollisionEnter>(new(hit));
+        Entity.Add<IsCollisionEnter>(new(collision2D));
     }
-}
-
-internal struct IsCollisionEnter
-{
-    public ControllerColliderHit hit;
-    public IsCollisionEnter(ControllerColliderHit hit)
+    void OnCollisionExit2D(Collision2D collision2D)
     {
-        this.hit = hit;
+        //Entity.Remove<IsCollisionEnter>();
     }
 }

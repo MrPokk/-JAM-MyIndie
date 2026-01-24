@@ -21,15 +21,13 @@ public class PlayerAttackingSystem : IEcsAutoImplement
 
         Vector2 direction = posMouse - player;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion quaternion = Quaternion.AngleAxis(angle, Vector3.forward);
-
-        angle *= Mathf.Deg2Rad;
-        player += new Vector2(size.x / 2 * Mathf.Cos(angle), size.x / 2 * Mathf.Sin(angle));
-        Collider[] colliders = Physics.OverlapBox(player, size, quaternion, 1 << 7);
-        Tool.DrawBox(player, size, quaternion, Color.red, 1);
+        float radAngle = angle * Mathf.Deg2Rad;
+        player += new Vector2(size.x / 2 * Mathf.Cos(radAngle), size.x / 2 * Mathf.Sin(radAngle));
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(player, size, angle, 1 << 7);
+        Tool.DrawBox(player, size, angle, Color.red, 1);
 
         int damage = provider.Entity.Get<DamageComponent>().damage;
-        foreach (Collider collider in colliders)
+        foreach (Collider2D collider in colliders)
         {
             collider.GetComponent<EntitiesProvider>().Entity.Add(new IsDamageComponent(damage, direction.normalized));
         }

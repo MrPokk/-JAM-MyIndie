@@ -22,7 +22,7 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
             var provider = entity.GetProvider<EntitiesProvider>();
 
             var moveStep = (Vector3)activeDash.direction * settings.dashSpeedMultiplier * dt;
-            provider.characterController.Move(moveStep);
+            provider.rigidbody.linearVelocity = moveStep;
 
             activeDash.remainingTime -= dt;
 
