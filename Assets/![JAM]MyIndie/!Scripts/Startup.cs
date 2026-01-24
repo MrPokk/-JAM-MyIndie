@@ -17,5 +17,7 @@ public class Startup : EcsUnityRoot
     {
         PlayerProvider player = new Loader<PlayerProvider>(EntitiesPaths.PLAYER);
         EnemyProvider enemy = new Loader<EnemyProvider>(EntitiesPaths.ENEMY);
+
+        Camera.cinemachineCamera.Follow = player.transform;
     }
 }
