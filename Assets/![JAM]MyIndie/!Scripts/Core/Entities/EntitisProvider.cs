@@ -1,4 +1,5 @@
-﻿using BitterECS.Integration;
+﻿using System;
+using BitterECS.Integration;
 using UnityEngine;
 
 public class EntitiesProvider : ProviderEcs<EntitiesPresenter>
@@ -12,6 +13,7 @@ public class EntitiesProvider : ProviderEcs<EntitiesPresenter>
         rigidbody = GetComponentInChildren<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
+
     void OnCollisionEnter2D(Collision2D collision2D)
     {
         Entity.Add<IsCollisionEnter>(new(collision2D));

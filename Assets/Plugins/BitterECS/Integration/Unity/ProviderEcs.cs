@@ -27,7 +27,7 @@ namespace BitterECS.Integration
     }
 
     [DisallowMultipleComponent]
-    public class ProviderEcs<T> : ProviderEcs
+    public class ProviderEcs<T> : ProviderEcs where T : new()
     {
         private static readonly bool s_isPresenterType = typeof(EcsPresenter).IsAssignableFrom(typeof(T));
         private static readonly bool s_isValueType = typeof(T).IsValueType;
@@ -155,6 +155,12 @@ namespace BitterECS.Integration
             }
 
             s_componentCache.Clear();
+        }
+
+        public ref TComponent GetEcsComponent<TComponent>() where TComponent : new()
+        {
+            var entity = Entity ?? throw new NullReferenceException($"Entity is null for provider {typeof(T).Name}");
+            return ref entity.Get<TComponent>();
         }
 
         private void RegistrationComponent(EcsEntity entity)

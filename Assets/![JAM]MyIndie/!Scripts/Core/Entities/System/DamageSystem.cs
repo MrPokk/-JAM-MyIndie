@@ -12,7 +12,8 @@ public class DamageSystem : IEcsAutoImplement
 
     private static void OnDamage(EcsEntity entity)
     {
-        ref var health = ref entity.Get<HealthComponent>();
+        var entitiesProvider = entity.GetProvider<EntitiesProvider>();
+        ref var health = ref entitiesProvider.GetEcsComponent<HealthComponent>();
         var impact = entity.Get<IsDamageComponent>();
 
         if (health.timeImmunity < Time.time)
@@ -20,7 +21,7 @@ public class DamageSystem : IEcsAutoImplement
             var newHealth = health.GetCurrentHealth() - impact.damage;
             health.SetHealth(newHealth);
             health.SetTimeImmunity(Time.time + impact.damage * 3.3f);
-            entity.GetProvider<EntitiesProvider>().GetComponent<Rigidbody2D>().linearVelocity = impact.direction * impact.damage;
+            entitiesProvider.GetComponent<Rigidbody2D>().linearVelocity = impact.direction * impact.damage;
         }
         else if (health.lastDamage < impact.damage)
         {
