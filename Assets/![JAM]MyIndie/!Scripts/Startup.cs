@@ -5,11 +5,11 @@ public class Startup : EcsUnityRoot
 {
     protected override void Bootstrap()
     {
-        Debug.Log("adad");
     }
 
     protected override void PostBootstrap()
     {
-
+        PlayerProvider player = new Loader<PlayerProvider>(EntitiesPaths.PLAYER);
+        EnemyProvider enemy = new Loader<EnemyProvider>(EntitiesPaths.ENEMY);
     }
 }
