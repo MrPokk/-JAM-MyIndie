@@ -8,7 +8,7 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
     private EcsFilter _movingFilter = Build.For<EntitiesPresenter>()
         .Filter()
         .WhereProvider<EntitiesProvider>()
-        .Include<ActiveDashComponent>()
+        .Include<IsDashingComponent>()
         .Include<DashComponent>();
 
     public void FixedRun()
@@ -17,18 +17,21 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
 
         foreach (var entity in _movingFilter)
         {
-            ref var activeDash = ref entity.Get<ActiveDashComponent>();
+            ref var activeDash = ref entity.Get<IsDashingComponent>();
             var settings = entity.Get<DashComponent>();
             var provider = entity.GetProvider<EntitiesProvider>();
 
-            var moveStep = (Vector3)activeDash.direction * settings.dashSpeedMultiplier * dt;
-            provider.characterController.Move(moveStep);
+            var velocity = activeDash.direction * settings.dashSpeedMultiplier;
+
+            provider.rigidbody.linearVelocity = velocity;
 
             activeDash.remainingTime -= dt;
 
             if (activeDash.remainingTime <= 0)
             {
-                entity.Remove<ActiveDashComponent>();
+                provider.rigidbody.linearVelocity = Vector2.zero;
+
+                entity.Remove<IsDashingComponent>();
             }
         }
     }

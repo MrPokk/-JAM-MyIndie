@@ -12,11 +12,15 @@ public class TouchDamageSystem : IEcsAutoImplement
 
     private static void OnCollision(EcsEntity entity)
     {
-        var collisionData = entity.Get<IsCollisionEnter>();
-        var hit = collisionData.hit;
+        if (!entity.TryGet<TouchDamageComponent>(out var touchDamageComponent))
+        {
+            return;
+        }
 
-        Debug.DrawRay(hit.point, hit.normal, Color.white);
-        Debug.Log(hit.collider.gameObject.name);
-        entity.Remove<IsCollisionEnter>();
+        var collisionData = entity.Get<IsCollisionEnter>();
+        var damage = touchDamageComponent.damage;
+        var collision = collisionData.collision;
+        Vector2 direction = collision.transform.position - entity.GetProvider<EntitiesProvider>().transform.position;
+        collisionData.collision.gameObject.GetComponent<EntitiesProvider>().Entity.Add(new IsDamageComponent(damage, direction));
     }
 }

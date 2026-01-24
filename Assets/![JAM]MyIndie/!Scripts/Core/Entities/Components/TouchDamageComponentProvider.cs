@@ -8,6 +8,6 @@ public struct TouchDamageComponent
     public int layer;
 }
 
-public class TouchDamageComponentProvider : ProviderEcs<DamageComponent>
+public class TouchDamageComponentProvider : ProviderEcs<TouchDamageComponent>
 {
 }

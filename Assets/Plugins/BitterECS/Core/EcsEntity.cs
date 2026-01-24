@@ -10,7 +10,7 @@ namespace BitterECS.Core
         internal void Init(EcsProperty property) => _properties = property;
         protected internal virtual void Registration() { }
 
-        public void Add<T>(in T component) where T : struct
+        public void Add<T>(in T component = default) where T : struct
         {
             _properties.Presenter.GetPool<T>().Add(_properties.Id, component);
             _properties.CountComponents++;

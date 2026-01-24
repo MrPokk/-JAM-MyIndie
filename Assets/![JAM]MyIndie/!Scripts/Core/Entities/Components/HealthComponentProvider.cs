@@ -5,22 +5,26 @@ using UnityEngine;
 [Serializable]
 public struct HealthComponent
 {
+    [Tooltip("Maximum number of dash charges the entity can have."), Range(1, MaxHealthLimit)]
+    public int maxHealth;
+
+    [Tooltip("Maximum number of dash charges the entity can have.")]
+    public int currentHealth;
+
     private const int MaxHealthLimit = 99999;
 
-    [SerializeField, Range(1, MaxHealthLimit)]
-    private int _maxHealth;
+    public readonly int GetCurrentHealth() => currentHealth > 0 ? currentHealth : maxHealth;
 
-    private int _currentHealth;
+    public readonly int GetMaxHealth() => maxHealth;
 
-    public readonly int GetCurrentHealth() => _currentHealth > 0 ? _currentHealth : _maxHealth;
+    public void SetHealth(int health) => currentHealth = Mathf.Clamp(health, 0, maxHealth);
 
-    public readonly int GetMaxHealth() => _maxHealth;
+    public void SetMaxHealth(int health) => maxHealth = Mathf.Clamp(health, 1, MaxHealthLimit);
 
-    public void SetHealth(int health) => _currentHealth = Mathf.Clamp(health, 0, _maxHealth);
+    public void ResetHealth() => currentHealth = maxHealth;
 
-    public void SetMaxHealth(int health) => _maxHealth = Mathf.Clamp(health, 1, MaxHealthLimit);
-
-    public void ResetHealth() => _currentHealth = _maxHealth;
+    public float timeImmunity;
+    public int lastDamage;
 }
 
 public class HealthComponentProvider : ProviderEcs<HealthComponent> { }

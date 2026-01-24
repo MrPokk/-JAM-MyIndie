@@ -2,5 +2,8 @@
 
 public class EntitiesPresenter : EcsPresenter
 {
-
+    protected override void Registration()
+    {
+        AddCheckEvent<IsCollisionEnter>();
+    }
 }
