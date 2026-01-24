@@ -54,9 +54,13 @@ public class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
             var controller = provider.rigidbody;
             var rawInput = inputComponent.currentInput.normalized;
             FlipSprite(provider, rawInput);
-
-            var motion = movingComponent.speed * Time.fixedDeltaTime * rawInput;
-            controller.linearVelocity = motion;
+            ref var ada = ref entity.Get<HealthComponent>().timeImmunity;
+            Debug.Log($"{ada} < {Time.time}");
+            if (entity.TryGet<HealthComponent>(out var healthComponent) && healthComponent.timeImmunity < Time.time)
+            {
+                var motion = movingComponent.speed * Time.fixedDeltaTime * rawInput;
+                controller.linearVelocity = motion;
+            }
 
             entity.AddOrRemove<IsMovingComponent, Vector3>(new(), rawInput, dir => dir != Vector3.zero);
         }

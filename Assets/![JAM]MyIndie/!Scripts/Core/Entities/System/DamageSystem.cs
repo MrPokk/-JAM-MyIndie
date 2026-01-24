@@ -14,22 +14,23 @@ public class DamageSystem : IEcsAutoImplement
     {
         var healthProvider = entity.GetProvider<EntitiesProvider>().GetComponent<HealthComponentProvider>();
         ref var health = ref healthProvider.Value;
-        var damage = entity.Get<IsDamageComponent>().damage;
+        var impact = entity.Get<IsDamageComponent>();
 
         if (health.timeImmunity < Time.time)
         {
-            var newHealth = health.GetCurrentHealth() - damage;
+            var newHealth = health.GetCurrentHealth() - impact.damage;
             health.SetHealth(newHealth);
-            health.timeImmunity = Time.time + damage / 0.3f;
+            health.SetTimeImmunity(Time.time + impact.damage * 3.3f);
+            healthProvider.GetComponent<Rigidbody2D>().linearVelocity = impact.direction * impact.damage;
         }
-        else if (health.lastDamage < damage)
+        else if (health.lastDamage < impact.damage)
         {
-            var damageDiff = damage - health.lastDamage;
+            var damageDiff = impact.damage - health.lastDamage;
             var newHealth = health.GetCurrentHealth() - damageDiff;
             health.SetHealth(newHealth);
         }
 
-        health.lastDamage = damage;
+        health.lastDamage = impact.damage;
 
         entity.Remove<IsDamageComponent>();
     }
