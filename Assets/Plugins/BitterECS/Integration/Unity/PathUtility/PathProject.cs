@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace BitterECS.Extra
 {
     public static class PathProject
@@ -15,5 +15,6 @@ namespace BitterECS.Extra
 
         public const string ENTITIES = "Entities/";
         public const string SETTINGS = "Settings/";
+        public const string PREFAB_OBJECTS = ENTITIES + "Prefabs/";
     }
 }

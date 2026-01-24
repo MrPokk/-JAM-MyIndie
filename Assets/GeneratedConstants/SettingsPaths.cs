@@ -3,8 +3,8 @@
 // [AUTO-GENERATED] by BitterECS AutoPathConstantsGenerator
 // Defines paths for prefabs containing BitterECS Providers or MonoBehaviours
 
-public static class EntitiesPaths
+public static class SettingsPaths
 {
-    /// <summary> Provider: PlayerProvider </summary>
-    public const string PLAYER = "Entities/Player";
+    /// <summary> Component: EventSystem </summary>
+    public const string EVENT_SYSTEM = "Settings/Control/EventSystem";
 }
