@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public struct MovingComponent
 {
-    private const int MaxSpeed = 10;
+    private const int MaxSpeed = 9999;
     [SerializeField, Range(1, MaxSpeed)] private int _speed;
     private int _currentSpeed;
 
