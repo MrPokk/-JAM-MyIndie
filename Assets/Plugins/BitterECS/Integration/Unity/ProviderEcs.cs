@@ -60,7 +60,7 @@ namespace BitterECS.Integration
         [SerializeField]
         protected T _value;
 
-        public ref T Value => ref _value;
+        public ref T Value => ref Entity.Get<T>();
 
         private bool _isDestroying = false;
         private EcsProperty _properties;
@@ -155,12 +155,6 @@ namespace BitterECS.Integration
             }
 
             s_componentCache.Clear();
-        }
-
-        public ref TComponent GetEcsComponent<TComponent>() where TComponent : new()
-        {
-            var entity = Entity ?? throw new NullReferenceException($"Entity is null for provider {typeof(T).Name}");
-            return ref entity.Get<TComponent>();
         }
 
         private void RegistrationComponent(EcsEntity entity)

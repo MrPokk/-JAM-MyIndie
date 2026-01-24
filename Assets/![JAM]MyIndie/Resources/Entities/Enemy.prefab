@@ -125,6 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingComponentProvider
   _value:
+    baseSpeed: 0
     speed: 0
 --- !u!114 &382386624837884472
 MonoBehaviour:
@@ -178,6 +179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TouchDamageComponentProvider
   _value:
     damage: 1
+    layer: 0
 --- !u!61 &3807249467490418303
 BoxCollider2D:
   m_ObjectHideFlags: 0
