@@ -55,7 +55,6 @@ public class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
             var rawInput = inputComponent.currentInput.normalized;
             FlipSprite(provider, rawInput);
             ref var ada = ref entity.Get<HealthComponent>().timeImmunity;
-            Debug.Log($"{ada} < {Time.time}");
             if (entity.TryGet<HealthComponent>(out var healthComponent) && healthComponent.timeImmunity < Time.time)
             {
                 var motion = movingComponent.speed * Time.fixedDeltaTime * rawInput;
