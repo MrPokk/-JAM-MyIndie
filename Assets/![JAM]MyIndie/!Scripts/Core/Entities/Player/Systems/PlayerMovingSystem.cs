@@ -53,7 +53,7 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
 
             var controller = provider.characterController;
             var rawInput = inputComponent.currentInput.normalized;
-            provider.spriteRenderer.flipX = rawInput.x < 0;
+            FlipSprite(provider, rawInput);
 
             var motion = movingComponent.GetSpeed() * Time.fixedDeltaTime * rawInput;
             controller.Move(motion);
@@ -62,4 +62,12 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
         }
     }
 
+    private static void FlipSprite(EntitiesProvider provider, Vector2 rawInput)
+    {
+        if (Mathf.Abs(rawInput.x) < 0.01f) return;
+
+        var scale = provider.transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(rawInput.x);
+        provider.transform.localScale = scale;
+    }
 }
