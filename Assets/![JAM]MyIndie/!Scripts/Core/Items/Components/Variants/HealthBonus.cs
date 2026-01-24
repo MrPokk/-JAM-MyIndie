@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 
 [Serializable]
 public struct HealthBonus : IAbilityData
 {
-    public float healthAmount;
+    public int healthAmount;
 }

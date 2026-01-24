@@ -10,7 +10,7 @@ public class DamageSystem : IEcsAutoImplement
 
     private static void OnDamage(EcsEntity entity)
     {
-        entity.GetProvider<EntitiesProvider>().GetComponent<HealthComponentProvider>().Value.currentHealth -= entity.Get<IsDamageComponent>().damage;
+        entity.GetProvider<EntitiesProvider>().GetComponent<HealthComponentProvider>().Value.SetHealth(entity.Get<HealthComponent>().GetCurrentHealth());
         entity.Remove<IsDamageComponent>();
     }
 }

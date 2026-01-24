@@ -50,12 +50,13 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
 
             ref var movingComponent = ref entity.Get<MovingComponent>();
             ref var inputComponent = ref entity.Get<InputComponent>();
+            ref var DashComponent = ref entity.Get<DashComponent>();
 
             var controller = provider.characterController;
             var rawInput = inputComponent.currentInput.normalized;
             FlipSprite(provider, rawInput);
 
-            var motion = movingComponent.GetSpeed() * Time.fixedDeltaTime * rawInput;
+            var motion = movingComponent.speed * Time.fixedDeltaTime * rawInput;
             controller.Move(motion);
 
             entity.AddOrRemove<IsMovingComponent, Vector3>(new(), rawInput, dir => dir != Vector3.zero);

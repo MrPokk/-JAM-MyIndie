@@ -46,11 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemProvide
   <Ability>k__BackingField:
     data:
-      rid: 1086678665494790413
+      rid: 1086678665494790414
   references:
     version: 2
     RefIds:
-    - rid: 1086678665494790413
-      type: {class: AttackSpeedModifier, ns: , asm: Assembly-CSharp}
+    - rid: 1086678665494790414
+      type: {class: MovementSpeedModifier, ns: , asm: Assembly-CSharp}
       data:
-        speedMultiplier: 0
+        speedBonus: 1
