@@ -31,7 +31,7 @@ namespace BitterECS.Core
             Registration();
         }
 
-        protected abstract void Registration();
+        protected virtual void Registration() { }
 
         protected void AddLimitedType<T>() where T : EcsEntity => _allowedTypes.Add(typeof(T));
         public void AddPoolFactory<T>(Func<EcsPool<T>> factory) where T : struct => _poolFactories[typeof(T)] = factory;
