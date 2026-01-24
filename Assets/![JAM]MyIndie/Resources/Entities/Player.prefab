@@ -80,7 +80,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_MaskInteraction: 0
   m_Sprite: {fileID: 4030942498213726051, guid: 44971d0959c0fff2880471064a5d6cc2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -102,7 +102,7 @@ Animator:
   m_GameObject: {fileID: 7043456221289176250}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 1824404256599661351, guid: 44971d0959c0fff2880471064a5d6cc2, type: 3}
+  m_Controller: {fileID: 9100000, guid: a91cb92f78db6813aa3dbfc2e3262c1f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -190,6 +190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerProvider
   characterController: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!114 &3970930688320794487
 MonoBehaviour:
   m_ObjectHideFlags: 0

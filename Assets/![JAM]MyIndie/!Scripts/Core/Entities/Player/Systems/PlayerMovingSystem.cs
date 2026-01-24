@@ -53,6 +53,7 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
 
             var controller = provider.characterController;
             var rawInput = inputComponent.currentInput.normalized;
+            provider.spriteRenderer.flipX = rawInput.x < 0;
 
             var motion = movingComponent.GetSpeed() * Time.fixedDeltaTime * rawInput;
             controller.Move(motion);
@@ -60,4 +61,5 @@ public partial class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
             entity.AddOrRemove<IsMovingComponent, Vector3>(new(), rawInput, dir => dir != Vector3.zero);
         }
     }
+
 }

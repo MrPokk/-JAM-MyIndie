@@ -5,5 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerProvider : EntitiesProvider
 {
-
+    public Animator animator;
+    protected override void Awake()
+    {
+        base.Awake();
+        animator = GetComponentInChildren<Animator>();
+    }
 }
