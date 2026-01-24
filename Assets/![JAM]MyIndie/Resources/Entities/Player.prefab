@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4611179171066279233}
   - component: {fileID: 6173590747896806433}
   - component: {fileID: 2483128586380924907}
-  - component: {fileID: 7723210913357833443}
   m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
@@ -129,6 +128,7 @@ GameObject:
   - component: {fileID: 3970930688320794487}
   - component: {fileID: 5823157704474257880}
   - component: {fileID: 382386624837884472}
+  - component: {fileID: 7723210913357833443}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -170,7 +170,7 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 0
+  m_Height: 0.3
   m_Radius: 0.07
   m_SlopeLimit: 45
   m_StepOffset: 0.3
