@@ -231,8 +231,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponentProvider
   _value:
-    maxHealth: 1
-    currentHealth: 0
+    maxHealth: 20
+    currentHealth: 20
     timeImmunity: 0
     lastDamage: 0
 --- !u!114 &-4553256082684300076

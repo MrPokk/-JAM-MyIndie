@@ -11,7 +11,7 @@ public struct HealthComponent
     [Tooltip("Maximum number of dash charges the entity can have.")]
     public int currentHealth;
 
-    private const int MaxHealthLimit = 99999;
+    private const int MaxHealthLimit = 100;
 
     public readonly int GetCurrentHealth() => currentHealth > 0 ? currentHealth : maxHealth;
 
@@ -22,6 +22,8 @@ public struct HealthComponent
     public void SetMaxHealth(int health) => maxHealth = Mathf.Clamp(health, 1, MaxHealthLimit);
 
     public void ResetHealth() => currentHealth = maxHealth;
+
+    public void SetTimeImmunity(float time) => timeImmunity = time;
 
     public float timeImmunity;
     public int lastDamage;

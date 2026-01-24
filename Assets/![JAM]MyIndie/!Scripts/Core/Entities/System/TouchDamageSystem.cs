@@ -20,7 +20,7 @@ public class TouchDamageSystem : IEcsAutoImplement
         var collisionData = entity.Get<IsCollisionEnter>();
         var damage = touchDamageComponent.damage;
         var collision = collisionData.collision;
-        Vector2 direction = collision.transform.position - entity.GetProvider<EntitiesProvider>().transform.position;
-        collisionData.collision.gameObject.GetComponent<EntitiesProvider>().Entity.Add(new IsDamageComponent(damage, direction));
+        Vector2 direction = entity.GetProvider<EntitiesProvider>().transform.position - collision.transform.position;
+        collision.gameObject.GetComponent<EntitiesProvider>().Entity.Add(new IsDamageComponent(damage, direction));
     }
 }
