@@ -53,4 +53,4 @@ MonoBehaviour:
     - rid: 1086678665494790414
       type: {class: MovementSpeedModifier, ns: , asm: Assembly-CSharp}
       data:
-        speedBonus: 1
+        speedBonus: 2

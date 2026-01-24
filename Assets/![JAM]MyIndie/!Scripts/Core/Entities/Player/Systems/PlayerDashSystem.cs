@@ -9,8 +9,7 @@ public class PlayerDashSystem : IEcsInitSystem
     private EcsFilter _playerEntities = Build.For<EntitiesPresenter>()
         .Filter()
         .Include<InputComponent>()
-        .Include<DashComponent>()
-        .Exclude<IsDashingComponent>();
+        .Include<DashComponent>();
 
     public void Init()
     {
@@ -42,7 +41,7 @@ public class PlayerDashSystem : IEcsInitSystem
                 ? input.currentInput.normalized
                 : (Vector2)provider.transform.right;
 
-            entity.Add(new IsDashingComponent(dash.dashDuration, direction));
+            entity.AddOrReplace(new IsDashingComponent(dash.dashDuration, direction));
         }
     }
 }

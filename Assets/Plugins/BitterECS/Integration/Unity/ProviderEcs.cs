@@ -115,12 +115,6 @@ namespace BitterECS.Integration
         {
             if (_isDestroying) return null;
 
-            if (_properties != null && _properties.Presenter != null)
-            {
-                var existing = _properties.Presenter.Get(_properties.Id);
-                if (existing != null) return existing;
-            }
-
             try
             {
                 var entity = Build.For(typeof(T))
@@ -161,11 +155,6 @@ namespace BitterECS.Integration
         {
             if (_isDestroying || entity == null)
                 return;
-
-            if (s_isPresenterType)
-            {
-                _properties = entity.Properties;
-            }
 
             GetComponents(s_componentCache);
 

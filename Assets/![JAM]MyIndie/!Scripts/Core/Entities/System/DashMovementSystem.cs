@@ -18,7 +18,7 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
         foreach (var entity in _movingFilter)
         {
             ref var activeDash = ref entity.Get<IsDashingComponent>();
-            var settings = entity.Get<DashComponent>();
+            ref var settings = ref entity.Get<DashComponent>();
             var provider = entity.GetProvider<EntitiesProvider>();
 
             var velocity = activeDash.direction * settings.dashSpeedMultiplier;
@@ -29,8 +29,6 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
 
             if (activeDash.remainingTime <= 0)
             {
-                provider.rigidbody.linearVelocity = Vector2.zero;
-
                 entity.Remove<IsDashingComponent>();
             }
         }

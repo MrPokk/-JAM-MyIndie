@@ -11,11 +11,10 @@ public struct ContainerItemsComponent
     {
         return items != null && items.Any(e => e.Ability.Is<T>());
     }
-    public T Get<T>() where T : struct, IAbilityData
+    public T Get<T>() where T : IAbilityData
     {
         var result = items.Find(e => e.Ability.Is<T>());
-        result.Ability.Is<T>(out var ability);
-        return ability;
+        return (T)result.Ability.data;
     }
 }
 
