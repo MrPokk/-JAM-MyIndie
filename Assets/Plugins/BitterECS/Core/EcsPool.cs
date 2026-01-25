@@ -17,9 +17,9 @@ namespace BitterECS.Core
         public int Count => _count - _freeIndices.Count;
         public int Capacity => _components.Length;
 
-        public EcsPool()
+        public EcsPool(int initialCapacity = -1)
         {
-            _initialCapacity = -1 > 0 ? -1 : EcsConfig.InitialPoolCapacity;
+            _initialCapacity = initialCapacity > 0 ? initialCapacity : EcsConfig.InitialPoolCapacity;
             _components = Array.Empty<T>();
             _entityToDataIndex = Array.Empty<int>();
             _dataIndexToEntity = Array.Empty<int>();
@@ -144,7 +144,7 @@ namespace BitterECS.Core
         {
             if (entityId >= _entityToDataIndex.Length || _entityToDataIndex[entityId] == -1)
             {
-                throw new KeyNotFoundException($"Entity {entityId} doesn't have this component {typeof(T).Name} ");
+                throw new KeyNotFoundException($"Entity {entityId} doesn't have this component");
             }
         }
 
