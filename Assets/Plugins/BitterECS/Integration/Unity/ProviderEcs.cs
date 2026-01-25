@@ -18,51 +18,46 @@ namespace BitterECS.Integration
         public virtual EcsProperty Properties => Entity?.Properties;
 
         public abstract void Sync(EcsEntity entity);
+        public void Dispose() => DisposeInternal();
 
         protected abstract void InitInternal(EcsProperty property);
         protected abstract void DisposeInternal();
 
         void IInitialize<EcsProperty>.Init(EcsProperty property) => InitInternal(property);
-        public void Dispose() => DisposeInternal();
     }
 
     [DisallowMultipleComponent]
     public class ProviderEcs<T> : ProviderEcs where T : new()
     {
+        private delegate void SyncDelegate(EcsEntity entity, in T value);
+
         private static readonly bool s_isPresenterType = typeof(EcsPresenter).IsAssignableFrom(typeof(T));
         private static readonly bool s_isValueType = typeof(T).IsValueType;
-
-        private delegate void SyncDelegate(EcsEntity entity, in T value);
         private static readonly SyncDelegate s_syncAction;
-
-        private static readonly List<ITypedComponentProvider> s_componentCache = new(16);
+        private static readonly List<ITypedComponentProvider> s_sharedComponentCache = new(16);
 
         static ProviderEcs()
         {
-            if (s_isValueType && !s_isPresenterType)
+            if (!s_isValueType || s_isPresenterType) return;
+
+            try
             {
-                try
+                var methodInfo = typeof(EcsEntity).GetMethod(nameof(EcsEntity.AddOrReplace), BindingFlags.Instance | BindingFlags.Public);
+                if (methodInfo != null)
                 {
-                    var methodInfo = typeof(EcsEntity).GetMethod("AddOrReplace", BindingFlags.Instance | BindingFlags.Public);
-                    if (methodInfo != null)
-                    {
-                        var genericMethod = methodInfo.MakeGenericMethod(typeof(T));
-                        s_syncAction = (SyncDelegate)Delegate.CreateDelegate(typeof(SyncDelegate), genericMethod);
-                    }
+                    var genericMethod = methodInfo.MakeGenericMethod(typeof(T));
+                    s_syncAction = (SyncDelegate)Delegate.CreateDelegate(typeof(SyncDelegate), genericMethod);
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError($"[ProviderEcs] Failed to create sync delegate for {typeof(T)}: {e}");
-                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"[ProviderEcs] Delegate creation failed for {typeof(T)}: {e}");
             }
         }
 
-        [SerializeField]
-        protected T _value;
+        [SerializeField] protected T _value;
 
-        public ref T Value => ref Entity.Get<T>();
-
-        private bool _isDestroying = false;
+        private bool _isDestroying;
         private EcsProperty _properties;
         private ProviderEcs _cachedRootProvider;
 
@@ -70,19 +65,9 @@ namespace BitterECS.Integration
 
         public override EcsProperty Properties => s_isPresenterType ? _properties : base.Properties;
 
-        public override EcsEntity Entity
-        {
-            get
-            {
-                if (s_isPresenterType)
-                {
-                    return EnsureEntityCreated();
-                }
+        public ref T Value => ref SyncInspectorValue(ref Entity.Get<T>());
 
-                FindAndCacheRoot();
-                return _cachedRootProvider != null ? _cachedRootProvider.Entity : null;
-            }
-        }
+        public override EcsEntity Entity => s_isPresenterType ? EnsureEntityCreated() : GetParentEntity();
 
         protected virtual void Awake()
         {
@@ -92,18 +77,15 @@ namespace BitterECS.Integration
             }
             else
             {
-                FindAndCacheRoot();
+                ProcessComponents();
                 if (_cachedRootProvider == null)
                 {
-                    Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Failed to find a valid Parent Entity (Presenter) on GameObject '{name}'.", this);
+                    throw new Exception($"[ProviderEcs<{typeof(T).Name}>] Missing Root Provider on '{name}'.");
                 }
             }
         }
 
-        private void OnDestroy()
-        {
-            Dispose();
-        }
+        private void OnDestroy() => Dispose();
 
         public override void Sync(EcsEntity entity)
         {
@@ -111,11 +93,27 @@ namespace BitterECS.Integration
             s_syncAction?.Invoke(entity, _value);
         }
 
+        protected override void InitInternal(EcsProperty property)
+        {
+            if (s_isPresenterType) _properties ??= property;
+        }
+
+        protected override void DisposeInternal()
+        {
+            if (_isDestroying) return;
+            _isDestroying = true;
+
+            if (s_isPresenterType) HandlePresenterDispose();
+            else Entity?.Dispose();
+
+            if (gameObject != null) Destroy(gameObject);
+        }
+
         private EcsEntity EnsureEntityCreated()
         {
             if (_isDestroying) return null;
 
-            if (_properties != null && _properties.Presenter != null)
+            if (_properties?.Presenter != null)
             {
                 var existing = _properties.Presenter.Get(_properties.Id);
                 if (existing != null) return existing;
@@ -123,57 +121,47 @@ namespace BitterECS.Integration
 
             try
             {
-                var entity = Build.For(typeof(T))
+                return Build.For(typeof(T))
                     .Add<EcsEntity>()
-                    .WithPost(RegistrationComponent)
+                    .WithPost(ProcessComponents)
                     .WithLink(this)
                     .Create();
-
-                return entity;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Critical error creating entity: {ex.Message}");
+                Debug.LogError($"[ProviderEcs<{typeof(T).Name}>] Creation error: {ex.Message}");
                 return null;
             }
         }
 
-        private void FindAndCacheRoot()
+        private void ProcessComponents(EcsEntity entityToSync = null)
         {
-            if (_isDestroying || _cachedRootProvider != null)
-                return;
+            var isSyncMode = entityToSync != null;
 
-            GetComponents(s_componentCache);
+            if (_isDestroying) return;
+            if (!isSyncMode && _cachedRootProvider != null) return;
 
-            for (var i = 0; i < s_componentCache.Count; i++)
+            GetComponents(s_sharedComponentCache);
+
+            foreach (var provider in s_sharedComponentCache)
             {
-                if (s_componentCache[i] is ProviderEcs provider && provider.IsPresenter)
+                if (ReferenceEquals(provider, this)) continue;
+
+                if (isSyncMode)
                 {
-                    _cachedRootProvider = provider;
-                    break;
+                    provider.Sync(entityToSync);
+                }
+                else
+                {
+                    if (provider is ProviderEcs { IsPresenter: true } root)
+                    {
+                        _cachedRootProvider = root;
+                        break;
+                    }
                 }
             }
 
-            s_componentCache.Clear();
-        }
-
-        private void RegistrationComponent(EcsEntity entity)
-        {
-            if (_isDestroying || entity == null)
-                return;
-
-            GetComponents(s_componentCache);
-
-            var count = s_componentCache.Count;
-            for (var i = 0; i < count; i++)
-            {
-                var provider = s_componentCache[i];
-                if (ReferenceEquals(provider, this)) continue;
-
-                provider.Sync(entity);
-            }
-
-            s_componentCache.Clear();
+            s_sharedComponentCache.Clear();
         }
 
         private void HandlePresenterDispose()
@@ -195,31 +183,16 @@ namespace BitterECS.Integration
             }
         }
 
-        protected override void InitInternal(EcsProperty property)
+        private ref T SyncInspectorValue(ref T v)
         {
-            if (s_isPresenterType)
-                _properties ??= property;
+            _value = v;
+            return ref v;
         }
 
-        protected override void DisposeInternal()
+        private EcsEntity GetParentEntity()
         {
-            if (_isDestroying)
-                return;
-
-            _isDestroying = true;
-            if (s_isPresenterType)
-            {
-                HandlePresenterDispose();
-            }
-            else
-            {
-                Entity?.Dispose();
-            }
-
-            if (gameObject != null)
-            {
-                Destroy(gameObject);
-            }
+            ProcessComponents();
+            return _cachedRootProvider?.Entity;
         }
 
 #if UNITY_EDITOR
@@ -245,21 +218,28 @@ namespace BitterECS.Integration
 
         private void ValidateHasPresenter()
         {
+            var components = GetComponents<Component>();
             var hasPresenter = false;
-            var providers = GetComponents<ProviderEcs>();
-            foreach (var p in providers) { if (p.IsPresenter) { hasPresenter = true; break; } }
 
-            if (!hasPresenter)
+            foreach (var c in components)
             {
-                var links = GetComponents<ILinkableProvider>();
-                foreach (var l in links)
+                if (c is ProviderEcs { IsPresenter: true })
                 {
-                    if (!ReferenceEquals(l, this) && l is not ProviderEcs) { hasPresenter = true; break; }
+                    hasPresenter = true;
+                    break;
+                }
+
+                if (c is ILinkableProvider && !ReferenceEquals(c, this) && c is not ProviderEcs)
+                {
+                    hasPresenter = true;
+                    break;
                 }
             }
 
             if (!hasPresenter)
-                Debug.LogError($"[ProviderEcs] Configuration Error on '{name}': Component Provider <{typeof(T).Name}> cannot be added without a Presenter/Root Provider!", this);
+            {
+                Debug.LogError($"[ProviderEcs] Configuration Error on '{name}': Provider <{typeof(T).Name}> requires a Presenter/Root Provider!", this);
+            }
         }
 #endif
     }

@@ -71,7 +71,7 @@ namespace BitterECS.Core
             => _properties.Presenter;
 
         public T GetProvider<T>() where T : class, ILinkableProvider
-            => _properties.Presenter.GetProvider(this) as T;
+            => (T)_properties.Presenter.GetProvider(this);
 
         public bool TryGetProvider<T>(out T provider) where T : class, ILinkableProvider
            => (provider = GetProvider<T>()) is not null and T;

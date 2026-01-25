@@ -16,6 +16,8 @@ public class DamageSystem : IEcsAutoImplement
         ref var health = ref healthProvider.Value;
         var impact = entity.Get<IsDamageComponent>();
 
+        Debug.Log($"Damage: {health.timeImmunity}"); // Debug lin
+
         if (health.timeImmunity < Time.time)
         {
             var newHealth = health.GetCurrentHealth() - impact.damage;

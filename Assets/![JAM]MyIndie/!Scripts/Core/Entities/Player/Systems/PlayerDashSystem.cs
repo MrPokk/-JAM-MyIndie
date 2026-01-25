@@ -28,7 +28,6 @@ public class PlayerDashSystem : IEcsInitSystem
     private static void OnDashStarted(EcsEntity entity)
     {
         ref var dash = ref entity.Get<DashComponent>();
-
         if (dash.currentCharges > 0)
         {
             dash.currentCharges--;
