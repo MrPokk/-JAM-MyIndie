@@ -10,13 +10,13 @@ namespace BitterECS.Core
         internal void Init(EcsProperty property) => _properties = property;
         protected internal virtual void Registration() { }
 
-        public void Add<T>(in T component) where T : struct
+        public void Add<T>(in T component) where T : new()
         {
             _properties.Presenter.GetPool<T>().Add(_properties.Id, component);
             _properties.CountComponents++;
         }
 
-        public void AddOrReplace<T>(in T component) where T : struct
+        public void AddOrReplace<T>(in T component) where T : new()
         {
             if (!Has<T>())
                 Add(component);
@@ -24,19 +24,19 @@ namespace BitterECS.Core
                 Get<T>() = component;
         }
 
-        public void AddPredicate<T>(T value, Predicate<T> predicate) where T : struct
+        public void AddPredicate<T>(T value, Predicate<T> predicate) where T : new()
         {
             if (!predicate(value)) return;
             AddOrReplace(value);
         }
 
-        public void AddPredicate<T, P>(T value, P predicateValue, Predicate<P> predicate) where T : struct
+        public void AddPredicate<T, P>(T value, P predicateValue, Predicate<P> predicate) where T : new()
         {
             if (!predicate(predicateValue)) return;
             AddOrReplace(value);
         }
 
-        public void AddOrRemove<T, P>(T value, P predicateValue, Predicate<P> predicate) where T : struct
+        public void AddOrRemove<T, P>(T value, P predicateValue, Predicate<P> predicate) where T : new()
         {
             if (!predicate(predicateValue))
             {
@@ -52,7 +52,7 @@ namespace BitterECS.Core
         public ref T Get<T>() where T : new()
             => ref _properties.Presenter.GetPool<T>().Get(GetID());
 
-        public bool TryGet<T>(out T component) where T : struct
+        public bool TryGet<T>(out T component) where T : new()
         {
             if (!Has<T>())
             {
@@ -76,19 +76,19 @@ namespace BitterECS.Core
         public bool TryGetProvider<T>(out T provider) where T : class, ILinkableProvider
            => (provider = GetProvider<T>()) is not null and T;
 
-        public void Set<T>(RefAction<T> modifier) where T : struct
+        public void Set<T>(RefAction<T> modifier) where T : new()
             => modifier(ref Get<T>());
 
-        public void Remove<T>() where T : struct
+        public void Remove<T>() where T : new()
         {
             _properties.Presenter.GetPool<T>().Remove(GetID());
             _properties.CountComponents--;
         }
 
-        public bool Has<T>() where T : struct
+        public bool Has<T>() where T : new()
             => _properties.Presenter.GetPool<T>().Has(GetID());
 
-        public bool Has<T>(Predicate<T> predicate) where T : struct
+        public bool Has<T>(Predicate<T> predicate) where T : new()
             => Has<T>() && predicate(Get<T>());
 
         public bool HasProvider<T>()
@@ -101,6 +101,6 @@ namespace BitterECS.Core
             Init(property);
         }
 
-        public delegate void RefAction<T>(ref T component) where T : struct;
+        public delegate void RefAction<T>(ref T component) where T : new();
     }
 }

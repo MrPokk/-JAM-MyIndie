@@ -5,7 +5,7 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class PlayerMovingSystem : IEcsFixedRunSystem, IEcsInitSystem
 {
-    public Priority Priority => Priority.High;
+    public Priority Priority => Priority.Medium;
 
     private Camera _mainCamera;
 

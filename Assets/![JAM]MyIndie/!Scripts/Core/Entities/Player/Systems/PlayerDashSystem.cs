@@ -6,8 +6,8 @@ public class PlayerDashSystem : IEcsInitSystem
 {
     public Priority Priority => Priority.High;
 
-    private EcsFilter _playerEntities = Build.For<EntitiesPresenter>()
-        .Filter()
+    private EcsFilter _playerEntities =
+    new EcsFilter<EntitiesPresenter>()
         .Include<InputComponent>()
         .Include<DashComponent>();
 

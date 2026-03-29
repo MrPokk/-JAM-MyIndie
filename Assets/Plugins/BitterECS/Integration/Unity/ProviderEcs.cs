@@ -84,7 +84,16 @@ namespace BitterECS.Integration
                 }
             }
         }
-
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if (Entity.TryGet<T>(out var component))
+            {
+                if (component.Equals(_value)) return;
+                SyncInspectorValue(ref component);
+            }
+        }
+#endif
         private void OnDestroy() => Dispose();
 
         public override void Sync(EcsEntity entity)

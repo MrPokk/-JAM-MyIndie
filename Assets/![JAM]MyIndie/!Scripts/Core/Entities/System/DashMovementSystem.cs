@@ -7,7 +7,7 @@ public class DashMovementSystem : IEcsAutoImplement, IEcsFixedRunSystem
 
     private EcsFilter _movingFilter = Build.For<EntitiesPresenter>()
         .Filter()
-        .WhereProvider<EntitiesProvider>()
+        .WhereProvider<PlayerProvider>()
         .Include<IsDashingComponent>()
         .Include<DashComponent>();
 
